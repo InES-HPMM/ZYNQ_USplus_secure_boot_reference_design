@@ -1,6 +1,0 @@
-ZynqMP> sf probe
-SF: Detected s25fl512s_256k with page size 256 Bytes, erase size 256 KiB, total 64 MiB
-ZynqMP> sf erase 0x025634 0x9485
-SF: Erase offset/length not multiple of erase size
-SF: 38021 bytes @ 0x25634 Erased: ERROR
-ZynqMP> 
