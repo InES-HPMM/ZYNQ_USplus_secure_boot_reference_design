@@ -1,0 +1,38 @@
+echo
+echo
+echo Load image to QSPI boot section 0x0000000 - 0x1000000
+echo =====================================================
+echo
+echo ===== Load image from sd card =====
+load mmc ${sdbootdev} 0x1000000 QSPI.bin
+echo
+echo ===== Check that the image size does not exceed 0x1000000 =====
+echo
+if itest ${filesize} > 0x1000000
+then
+echo IMAGE SIZE BIGGER THEN 0x1000000! EXITING...
+else
+echo Image size ok.
+echo
+echo ===== Erase QSPI boot section 0x0000000 - 0x1000000 =====
+echo
+sf probe
+sf erase 0x0000000 0x1000000
+echo
+echo ===== Write image to QSPI =====
+echo
+sf write 0x1000000 0x0000000 ${filesize}
+echo
+echo ===== Check written image =====
+echo
+sf read 0x2000000 0x0000000 ${filesize}
+echo
+if cmp.b 0x1000000 0x2000000 ${filesize}
+then
+echo IMAGE SUCCESSFULLY WRITTEN! EXITING...
+echo
+else
+echo IMAGE NOT SUCCESSFULLY WRITTEN! EXITING...
+echo
+fi
+fi
