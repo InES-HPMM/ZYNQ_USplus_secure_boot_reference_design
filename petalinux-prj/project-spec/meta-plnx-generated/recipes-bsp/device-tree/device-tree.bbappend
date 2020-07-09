@@ -1,16 +1,16 @@
 
-XSCTH_WS = "${TOPDIR}/../components/plnx_workspace/device-tree"
 export PETALINUX
-YAML_CONSOLE_DEVICE_CONFIG_forcevariable = "psu_uart_0"
+FILESEXTRAPATHS_append := ":${sysconf}"
 DT_PADDING_SIZE = "0x1000"
 DEVICETREE_FLAGS += ""
-YAML_MAIN_MEMORY_CONFIG_forcevariable = "PSU_DDR_0"
 KERNEL_DTS_INCLUDE = "${STAGING_KERNEL_DIR}/include"
-FILESEXTRAPATHS_append := ":${sysconf}"
-sysconf = "${TOPDIR}/../project-spec/configs"
 SRC_URI_append ="\
     file://config\
 "
+XSCTH_WS = "${TOPDIR}/../components/plnx_workspace/device-tree"
+YAML_CONSOLE_DEVICE_CONFIG_forcevariable = "psu_uart_0"
+YAML_MAIN_MEMORY_CONFIG_forcevariable = "PSU_DDR_0"
+sysconf = "${TOPDIR}/../project-spec/configs"
 do_configure_append () {
 	script="${PETALINUX}/etc/hsm/scripts/petalinux_hsm_bridge.tcl"
 	data=${PETALINUX}/etc/hsm/data/
