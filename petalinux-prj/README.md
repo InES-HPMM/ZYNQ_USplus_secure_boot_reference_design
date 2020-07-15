@@ -36,21 +36,20 @@ Documentation and Reference Guise.
 ## PetaLinux or Yocto?
 
 PetaLinux is the tool chain from Xilinx to create a Linux image for the Zynq
-Ultrascale+ MPSoC+. It is built upon Yocto, which is an-open source project, to
+Ultrascale+. It is built upon Yocto, which is an-open source project, to
 create Linux distributions for different platforms. Instead of using PetaLinux,
-it is possible to use Yocto to develop for the Zynq Ultrascale+ MPSoC+.
+it is possible to use Yocto  for development on the Zynq Ultrascale+.
 
 The advantage of Yocto is, it works for many platforms and therefore, the same
-tools and workflow can be used for different projects. Because Yocto is wider
-used, it has a better documentation and more examples and guides are available
-than for PetaLinux. Further, PetaLinux is based on Yocto, but some points are
-implemented differently and are a bit difficult to understand.
+tools and workflow can be used for different platforms. Because Yocto is more
+often used, it has a better documentation, more examples and more guides
+available than for PetaLinux. 
 
-But there is also a disadvantage. Although Xilinx provides guides to work with
-Yocto, it is not officially supported by Xilinx. If any problem occurrs, even if
-it is related to Yocto, Xilinx will not provide any support for it. Xilinx
-maintains a forum for PetaLinux, where most questions are answered by Xilinx.
-Further the guides and examples for Yocto are not as good maintained as for
+However, there is also a disadvantage. Although Xilinx provides guides to work
+with Yocto, it is not officially supported by Xilinx. If any problem occurs,
+even if it is related to Yocto, Xilinx will not provide any support for it.
+Xilinx maintains a forum for PetaLinux, where most questions are answered.
+Further, guides and examples for Yocto are not as good maintained as for
 PetaLinux and are sometimes out of date.
 
 ## Getting started
