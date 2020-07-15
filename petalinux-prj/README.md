@@ -1,4 +1,4 @@
-## Tools and Environment
+# Tools and Environment
 
 This section describes the tools and the environment used for the
 implementation. All features were tested on a Mercury XU5 (ME-XU5-5EV-2I-D12E)
@@ -11,7 +11,7 @@ integrated into the PetaLinux process. Nevertheless, because it is often very
 time consuming, the gnu-aarch64-none-linux-gcc compiler (9.2-2019.12) was used.
 The operating system of the host computer was based on Ubuntu 18.04.
 
-### PetaLinux-prj folder structure
+## PetaLinux-prj folder structure
 
 | Folder/File name | Description |
 |------------------|-------------|
@@ -26,14 +26,14 @@ The operating system of the host computer was based on Ubuntu 18.04.
 | moverootfs.sh | Shell script to move generated rootfs to /tftpboot/nfsroot if nfs is used. |
 | package.sh | Shell script to generate a boot image using the boot.bif file. |
 
-### PetaLinux project structure
+## PetaLinux project structure
 
 A useful PetaLinux project structure description can be found in the Tools
 Documentation and Reference Guise.
 
 [Petalinux Tools Documentation Reference Guide (UG1144)](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2020_1/ug1144-petalinux-tools-reference-guide.pdf)
 
-### PetaLinux or Yocto?
+## PetaLinux or Yocto?
 
 PetaLinux is the tool chain from Xilinx to create a Linux image for the Zynq
 Ultrascale+ MPSoC+. It is built upon Yocto, which is an-open source project, to
@@ -53,7 +53,7 @@ maintains a forum for PetaLinux, where most questions are answered by Xilinx.
 Further the guides and examples for Yocto are not as good maintained as for
 PetaLinux and are sometimes out of date.
 
-### Getting started
+## Getting started
 
 This section describes how to create the first project for a Mercury Board from
 Enclustra. A description of how to install and use PetaLinux can be found in the
@@ -63,7 +63,7 @@ focuses on the specialities of the Mercury Board.
   - [Petalinux Tools Documentation Reference Guide (UG1144)](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2020_1/ug1144-petalinux-tools-reference-guide.pdf)
   - [PetaLinux Tools Documentation Command Line Reference Guide (UG1157)](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug1157-petalinux-tools-command-line-guide.pdf)
 
-##### Create Vivado project
+### Create Vivado project
 
 If further adjustments to the hardware have to be made, it makes sense to create
 a Vivado project as well. The user guide to the reference design from Enclustra 
@@ -72,7 +72,7 @@ describes how to create a Vivado project.
   - Mercury XU5 SoC Module Reference Design for Mercury+ PE1 Base Board User
     Manual 
 
-##### Export Hardware
+### Export Hardware
 
 After synthesizing the Vivado project, the hardware information and the
 bitstream have to be exported. To export the hardware access
@@ -84,7 +84,7 @@ File->Export->Export Hardware...
 in the menu bar. It is essential to check `Include bitstream` in the options
 window, in order to use the export in PetaLinux.
 
-##### Create PetaLinux Project
+### Create PetaLinux Project
 
 In this case, none of the template board support packages from Xilinx will fit
 the chip, and an exported hardware will be later imported to the project. Thus,
@@ -98,7 +98,7 @@ petalinux-create --type project --template zynqMP --name <project-name>
 Sometimes PetaLinux can not build the cloned project. In such a case simply
 create anew project and then overwrite it with the project files from this repository.
 
-##### Import hardware to the PetaLinux project
+### Import hardware to the PetaLinux project
 
 This step is always necessary, after any changes in hardware. The new bitstream
 has to be exported and imported to PetaLinux. During this work, no issues were
@@ -121,7 +121,7 @@ the following command.
 petalinux-config --get-hw-description=<PATH-TO-FOLDER-CONTAINING-HDF-OR-XSA>
 ```
 
-##### Configure PetaLinux Project
+### Configure PetaLinux Project
 
 After importing the hardware description, the first configuring window appears.
 It can be exited by double-pressing the `ESC` key. The different components are
@@ -145,7 +145,7 @@ These components are:
   - `bootloader` — FSBL 
   - `device-tree`
 
-##### Build PetaLinux project
+### Build PetaLinux project
 
 Likewise, to configuring, build individual components with the `-c <COMPONENT-NAME>` flag. To build
 the whole project use:
@@ -154,7 +154,7 @@ the whole project use:
 petalinux-build
 ```
 
-##### Packaging the project
+### Packaging the project
 
 After building the project, all individual executables are generated
 individually but are not bundled together in a boot-able image. To generate a
@@ -167,7 +167,7 @@ petalinux-package --boot --fsbl <FSBL-ELF> --fpga <BITSTREAM> --u-boot --pmufw <
 With this image, the device will not boot securely. To generate an image for a
 secure boot, read the following section.
 
-## Secure Boot
+# Secure Boot
 
 The implementation of secure boot focuses mainly on packaging and settings in
 the eFuse registers. Two implementations of secure boot are possible. By setting
@@ -201,7 +201,7 @@ User Guide . bootgen is the tool behind the `.bif` file. It is automatically
 installed when installing PetaLinux. In case the bootgen tool has to be used
 separately, it can be installed using the Vivado Design Suite Web installer .
 
-### Authentication
+## Authentication
 
 The key and signature paths have to be included in order to generate images with
 authentication. Thus, in the `.bif` file has to be declared, which key is used for
@@ -296,7 +296,7 @@ The boot header and the fsbl need to have the same key defined. They usually are
 authenticated separately, but we noticed during testing, that the authentication
 throws an error, if two separate keys are defined.
 
-#### Generate Keys for RSA 
+### Generate Keys for RSA 
 
 In both cases, at some point, keys have to be generated. Xilinx provides a way
 of using bootgen.
@@ -313,7 +313,7 @@ Thus, the second approach with openssl is easier.
 
 Important is to generate a key with the key length of 4096 bits.
 
-#### Generate PPK Hash
+### Generate PPK Hash
 
 To be able to write the hash from the PPK to the eFuse, it first has to be
 generated. Thus, the bootgen tool also provides a feature to generate the hash
@@ -325,7 +325,7 @@ bootgen -efuseppkbits efuseppkhash.txt -arch zynqmp -w -o test.bin -image boot.b
 
 Bootgen stores the hash in the defined file. In this example `efuseppkhash.txt`.
 
-### Encryption
+## Encryption
 
 As AES is a symmetrical method, it is much easier to implement. However, it has
 the disadvantage that the key files have to be available, for the generation of
@@ -365,7 +365,7 @@ image : {
   }
 ```
 
-#### Generate Keys for AES
+### Generate Keys for AES
 
 To generate keys for AES nothing has to be especially done. When the bootgen
 command runs, it automatically generates new keys, if it does not find the
@@ -393,38 +393,3 @@ This key should be the same across all generated key files. Also, the according
 iv should be the same. The second key is the individual key for each partition.
 This key and the iv are different from partition to partition. The last key is
 the operational key. This key and iv are also identical on all key files.
-
-### Write eFuse or BBRAM
-
-The main possibility to write the eFuse and the BBRAM is through the xilskey
-library provided by Xilinx . Xilinx already provides an example which only has
-to be complemented with the user-specific data. To use the example the
-description in the application note Programming BBRAM and eFuses  can be
-followed. While the BBRAM can be written a limitless amount, the bits in the
-eFuse can only be set once from 0 to 1.
-
-#### eFuse Registers
-
-The following table provides an overview about the most
-important eFuse registers. A complete list is available in the Zynq Ultrascale+
-MPSoC+ Devices Register Reference .
-
-| Name | Size (bits) | Description |
-|:-----|:-----------:|:------------|
-| RSA\_EN | 15 | Enforces to boot with authentication. Enables secure boot. |
-| PPK0\_WRLK | 1 | Locks writing to the PPK0 eFuse. |
-| PPK0\_INVLD | 2 | Revokes the PPK0. |
-| PPK0\_0…11 | 12x32 | Hash of PPK0 |
-| PPK1\_WRLK | 1 | Locks writing to the PPK1 eFuse. |
-| PPK1\_INVLD | 2 | Revokes the PPK1. |
-| PPK1\_0…11 | 12x32 | Hash of PPK1, in case of key revocation |
-| SPK\_ID | 32 | SPK ID to disable images with old secondary keys |
-| USER\_0…7 | 8x32 | Eight user fuses. Can be used for enhanced key revocation or user specific features. |
-| ENC\_ONLY | 1 | Enforces encrypted boot partitions. Only the eFuse key can be used for AES. Enables secure boot. |
-| AES\_RDLK | 1 | Disables the CRC check for the AES key. |
-| AES\_WRLK | 1 | Locks writing the AES eFuse. |
-| AES\_KEY | 256 | eFuse register for the AES key. |
-| BBRAM\_DIS | 1 | Disables the BBRAM key. |
-| JTAG\_DIS | 1 | Disables the jtag controller. |
-| DFT\_DIS | 1 | Disable dft. |
-| SEC\_LOCK | 1 | Disable reboot into jtag mode after secure lockdown. |
