@@ -28,6 +28,10 @@ The operating system of the host computer was based on Ubuntu 18.04.
 
 ### PetaLinux project structure
 
+A useful PetaLinux project structure description can be found in the Tools
+Documentation and Reference Guise.
+
+[Petalinux Tools Documentation Reference Guide (UG1144)](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2020_1/ug1144-petalinux-tools-reference-guide.pdf)
 
 ### PetaLinux or Yocto?
 
@@ -56,9 +60,8 @@ Enclustra. A description of how to install and use PetaLinux can be found in the
 following user manuals and application notes from Xilinx. The following Guides
 focuses on the specialities of the Mercury Board.
 
-  - PetaLinux Tools Documentation Reference Guide (UG1144) 
-
-  - PetaLinux Tools Documentation Command Line Reference Guide (UG1157) 
+  - [Petalinux Tools Documentation Reference Guide (UG1144)](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2020_1/ug1144-petalinux-tools-reference-guide.pdf)
+  - [PetaLinux Tools Documentation Command Line Reference Guide (UG1157)](https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug1157-petalinux-tools-command-line-guide.pdf)
 
 ##### Create Vivado project
 
@@ -411,12 +414,12 @@ MPSoC+ Devices Register Reference .
 | RSA\_EN | 15 | Enforces to boot with authentication. Enables secure boot. |
 | PPK0\_WRLK | 1 | Locks writing to the PPK0 eFuse. |
 | PPK0\_INVLD | 2 | Revokes the PPK0. |
-| PPK0\_0…11 | 12\(\times\)32 | Hash of PPK0 |
+| PPK0\_0…11 | 12x32 | Hash of PPK0 |
 | PPK1\_WRLK | 1 | Locks writing to the PPK1 eFuse. |
 | PPK1\_INVLD | 2 | Revokes the PPK1. |
-| PPK1\_0…11 | 12\(\times\)32 | Hash of PPK1, in case of key revocation |
+| PPK1\_0…11 | 12x32 | Hash of PPK1, in case of key revocation |
 | SPK\_ID | 32 | SPK ID to disable images with old secondary keys |
-| USER\_0…7 | 8\(\times\)32 | Eight user fuses. Can be used for enhanced key revocation or user specific features. |
+| USER\_0…7 | 8x32 | Eight user fuses. Can be used for enhanced key revocation or user specific features. |
 | ENC\_ONLY | 1 | Enforces encrypted boot partitions. Only the eFuse key can be used for AES. Enables secure boot. |
 | AES\_RDLK | 1 | Disables the CRC check for the AES key. |
 | AES\_WRLK | 1 | Locks writing the AES eFuse. |
