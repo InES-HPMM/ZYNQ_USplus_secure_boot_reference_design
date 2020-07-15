@@ -47,7 +47,7 @@ than for PetaLinux. Further, PetaLinux is based on Yocto, but some points are
 implemented differently and are a bit difficult to understand.
 
 But there is also a disadvantage. Although Xilinx provides guides to work with
-Yocto, it is not officially supported by Xilinx. If any problem occourrs, even if
+Yocto, it is not officially supported by Xilinx. If any problem occurrs, even if
 it is related to Yocto, Xilinx will not provide any support for it. Xilinx
 maintains a forum for PetaLinux, where most questions are answered by Xilinx.
 Further the guides and examples for Yocto are not as good maintained as for
