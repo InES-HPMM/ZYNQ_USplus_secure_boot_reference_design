@@ -1,10 +1,4 @@
-# Crypto API
-
-Short description crypto api.
-
-
-
-# Crypto API Implementation
+# Linux Crypto API Implementation
 
 This section describes how to implement an application, which uses the Linux Crypto API.
 
@@ -245,7 +239,7 @@ These examples show how to access the Linux Crypto API and are not a complete to
 
 ### Requirements
 
-The compiler aarch64-none-linux-gnu-gcc Linux applications on the aarch64 architecture is required to compile the examples. It can be downloaded from https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads}{Arm\textregistered}. The provided makefile expects to find the compiler binaries under the following path. If the path is different, it has to be changed in the makefile.
+The compiler aarch64-none-linux-gnu-gcc Linux applications on the aarch64 architecture is required to compile the examples. It can be downloaded from https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads. The provided makefile expects to find the compiler binaries under the following path. If the path is different, it has to be changed in the makefile.
 
 	/opt/gcc/gcc-arm-9.2-2019.12-x86\_64-aarch64-none-linux-gnu/bin/
 
