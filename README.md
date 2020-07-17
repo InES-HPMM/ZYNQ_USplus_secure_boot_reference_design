@@ -1,6 +1,6 @@
 # Secure Boot reference design for Xilinx Zynq Ultrascale+
 
-This reference design for the Mercury+ PE1 board with the SoC Module Mercury XU5
+This reference design for the Mercury PE1 board with the SoC Module Mercury XU5
 was created during a bachelor thesis at the ZHAW School of Engineering. It
 should give a head start designing a secure and bootable image for your device.
 This reference design only contains descriptions to the implementation of the
