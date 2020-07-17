@@ -22,7 +22,6 @@ The complete documentation of the bachelor thesis can be found in the
 | trustzone | Contains the description for TrustZone implementation. How to implement OP-TEE on the zcu102 Evaluation Kit from Xilinx is also described. |
 | update-process | Contains a description how an update procedure may look like. |
 | BA20_rosn_02_Secure_Boot_final.pdf | Final bachelor thesis documentation. |
-| README.md | This README file. |
 
 ## Secure Boot
 

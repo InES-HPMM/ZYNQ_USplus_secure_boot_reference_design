@@ -1,11 +1,5 @@
 # Update Process
 
-## update_process folder structure
-
-| Folder/File name | Description |
-|------------------|-------------|
-| README.md | This file |
-
 ## Implementation
 
 The update process varies from use case to use case and is dependable on both

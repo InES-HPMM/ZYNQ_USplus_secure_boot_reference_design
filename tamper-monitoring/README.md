@@ -5,7 +5,6 @@
 | Folder/File name | Description |
 |------------------|-------------|
 | testing | A folder containing different programs to read and write registers |
-| README.md | This file. |
 
 ## Implementation
 
