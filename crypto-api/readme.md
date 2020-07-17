@@ -28,21 +28,17 @@ The procedure to hash data with the Linux Crypto API is done in the following st
 
 To start the communication with the Linux Crypto API a socket has to be created. All further steps reference to this socket. Therefore, the Linux Crypto API can distinguish between different accesses.
 
-`socket_desc = socket(AF_ALG, SOCK_SEQPACKET, 0);`
+	socket_desc = socket(AF_ALG, SOCK_SEQPACKET, 0);
 
 #### Bind the socket to the desired algorithm name and type
 
 After the socket is created, it has to be bound to the desired algorithm. To do this, the `type` and `name` of the algorithm has to be selected. For a hash algorithm the `type` is `hash` and the `name` `sha256` for a normal SHA-256. For the Xilinx implementation of the SHA3-384 algorithm, the name is `\code{xilinx-keccak-384`.
 
-`struct sockaddr_alg sa = {`
-
-`.salg_family = AF_ALG,`
-
-`.salg_type = "hash",`
-
-`.salg_name = "sha256",`
-
-`};`
+	struct sockaddr_alg sa = {
+	 .salg_family = AF_ALG,
+	 .salg_type = "hash",
+	 .salg_name = "sha256",
+	};
 
 `bind(socket_desc, (struct sockaddr*)&sa, sizeof(sa));`
 
@@ -139,7 +135,7 @@ Create the first `cmsg` structure in the `msghdr` structure and select if the da
 	
 Create the second `cmsg` structure in the `msghdr` structure to set the IV and IV length. The length of the IV is always 128 bit (16 byte) for AES CBC, but can be different for other algorithms. The size of the structure is 20 bytes, 16 bytes for the IV and 4 bytes for the length.
 
-`char iv[] = "iv ...";
+`char iv[] = "iv ...";`
 
 `cmsg = CMSG_NXTHDR(&msg, cmsg);`
 
