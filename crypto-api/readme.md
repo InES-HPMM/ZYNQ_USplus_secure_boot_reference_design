@@ -34,19 +34,25 @@ To start the communication with the Linux Crypto API a socket has to be created.
 
 After the socket is created, it has to be bound to the desired algorithm. To do this, the `type` and `name` of the algorithm has to be selected. For a hash algorithm the `type` is `hash` and the `name` `sha256` for a normal SHA-256. For the Xilinx implementation of the SHA3-384 algorithm, the name is `\code{xilinx-keccak-384`.
 
-`struct sockaddr_alg sa = {
-.salg_family = AF_ALG,
-.salg_type = "hash",
-.salg_name = "sha256",
-};
-bind(socket_desc, (struct sockaddr*)&sa, sizeof(sa));`
+`struct sockaddr_alg sa = {`
+
+`.salg_family = AF_ALG,`
+
+`.salg_type = "hash",`
+
+`.salg_name = "sha256",`
+
+`};`
+
+`bind(socket_desc, (struct sockaddr*)&sa, sizeof(sa));`
 
 #### Send the data, which needs to be hashed, to the Linux Crypto API
 
 Create a file descriptor to transfer the data with the `accept` systemcall and send the data with the `write` systemcall.
 
-`fd = accept(socket_desc, NULL, 0);
-write(fd, data_to_hash, sizeof(data_to_hash));`
+`fd = accept(socket_desc, NULL, 0);`
+
+`write(fd, data_to_hash, sizeof(data_to_hash));`
 
 #### Get the calculated hash from the Linux Crypto API
 
@@ -68,21 +74,28 @@ To start the communication with the Linux Crypto API a socket has be created. Al
 
 After the socket is created it has to be bound to the desired algorithm. To do this, the `type` and `name` of the algorithm has to be selected. For AES CBC the `type` is `skcipher` and the `name` is `cbc(aes)`.
 
-`struct sockaddr_alg sa = {
-.salg_family = AF_ALG,
-.salg_type = "skcipher",
-.salg_name = "cbc(aes)"
-};
-bind(socket_desc, (struct sockaddr*)&sa, sizeof(sa));`
+`struct sockaddr_alg sa = {`
+
+`.salg_family = AF_ALG,`
+
+`.salg_type = "skcipher",`
+
+`.salg_name = "cbc(aes)"`
+
+`};`
+
+`bind(socket_desc, (struct sockaddr*)&sa, sizeof(sa));`
 
 #### Set key and key length
 
 The `setsockopt` systemcall is used to set the key and key length. The key length selects if AES 128, 192 or 256 is used.
 
 
-`#define AES_KEY_LENGTH 32 /* 16 byte -> 128 bit, 24 byte -> 192, 32 byte -> 256 bit */
-char aes_key[] = "aes key ...";
-setsockopt(sd, SOL_ALG, ALG_SET_KEY, aes_key, AES_KEY_LENGTH);`
+`#define AES_KEY_LENGTH 32 /* 16 byte -> 128 bit, 24 byte -> 192, 32 byte -> 256 bit */`
+
+`char aes_key[] = "aes key ...";`
+
+`setsockopt(sd, SOL_ALG, ALG_SET_KEY, aes_key, AES_KEY_LENGTH);`
 
 
 #### Create a msghdr structure for further configurations
@@ -91,50 +104,64 @@ setsockopt(sd, SOL_ALG, ALG_SET_KEY, aes_key, AES_KEY_LENGTH);`
 The `msghdr` structure holds the IV, the IV length, the data and the direction if the data needs to be encrypted or decrypted. Only the data is directly contained in the `msghdr` structure. The rest is in `cmsg` structures inside the `msghdr` structure.
 The `CMSG_SPACE(4)` and `CMSG\_SPACE(20)` are the size for the two `cmsg` structures in the `msghdr` structure described below.
 
-`struct msghdr msg = {};
+`struct msghdr msg = {};`
 
-/* buffer for op, iv and aad data length, used for msghdr (msg) */
-char cbuf[CMSG_SPACE(4) + CMSG_SPACE(20)] = {0};
-msg.msg_control = cbuf;
-msg.msg_controllen = sizeof(cbuf);
+`/* buffer for op, iv and aad data length, used for msghdr (msg) */`
 
-/* pointer for elements from cbuf */
-struct cmsghdr *cmsg;`
+`char cbuf[CMSG_SPACE(4) + CMSG_SPACE(20)] = {0};`
+
+`msg.msg_control = cbuf;`
+
+`msg.msg_controllen = sizeof(cbuf);`
+
+`/* pointer for elements from cbuf */`
+
+`struct cmsghdr *cmsg;`
+
+#### Select the encryption/decryption direction
+
+Create the first `cmsg` structure in the `msghdr` structure and select if the data should be encrypted or decrypted. The flag to select the direction is a 4 byte variable, therefore `CMSG\_LEN(4)`.
+
+`cmsg = CMSG_FIRSTHDR(&msg);`
+
+`cmsg->cmsg_level = SOL_ALG;`
+
+`cmsg->cmsg_type = ALG_SET_OP;`
+
+`cmsg->cmsg_len = CMSG_LEN(4);`
+
+`/* select encryption / decryption (ALG_OP_ENCRYPT / ALG_OP_DECRYPT) */`
+
+`*(__u32 *)CMSG_DATA(cmsg) = ALG_OP_ENCRYPT;`
 
 
+#### Select IV and IV length
+	
+Create the second `cmsg` structure in the `msghdr` structure to set the IV and IV length. The length of the IV is always 128 bit (16 byte) for AES CBC, but can be different for other algorithms. The size of the structure is 20 bytes, 16 bytes for the IV and 4 bytes for the length.
+
+`char iv[] = "iv ...";
+
+`cmsg = CMSG_NXTHDR(&msg, cmsg);`
+
+`cmsg->cmsg_level = SOL_ALG;`
+
+`cmsg->cmsg_type = ALG_SET_IV;`
+
+`cmsg->cmsg_len = CMSG_LEN(20);`
+
+`ivp = (void *)CMSG_DATA(cmsg);`
+
+`ivp->ivlen = 16;`
+
+`/* set iv for cbc algorithm */`
+
+`memcpy(ivp->iv, iv, 16);`
 
 
+#### Send the data to the Linux Crypto API. \newline
+	
+Add the data to encrypt or decrypt to the `msghdr` structure and send it to the Linux Crypto API.
 
-	\item Select the encryption/decryption direction. \newline
-	Create the first `cmsg` structure in the `msghdr` structure and select if the data should be encrypted or decrypted. The flag to select the direction is a 4 byte variable, therefore \code{CMSG\_LEN(4)}.~\cite{crypto_api_docu}
-	\begin{lstlisting}[style=cstyle]
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_level = SOL_ALG;
-	cmsg->cmsg_type = ALG_SET_OP;
-	cmsg->cmsg_len = CMSG_LEN(4);
-	/* select encryption / decryption (ALG_OP_ENCRYPT / ALG_OP_DECRYPT) */
-	*(__u32 *)CMSG_DATA(cmsg) = ALG_OP_ENCRYPT;
-	\end{lstlisting}
-
-	\item Select IV and IV length. \newline
-	Create the second `cmsg` structure in the `msghdr` structure to set the IV and IV length. The length of the IV is always 128 bit (16 byte) for AES CBC, but can be different for other algorithms. The size of the structure is 20 bytes, 16 bytes for the IV and 4 bytes for the length.~\cite{crypto_api_docu}
-	\begin{lstlisting}[style=cstyle]
-	char iv[] = "iv ...";
-
-	cmsg = CMSG_NXTHDR(&msg, cmsg);
-	cmsg->cmsg_level = SOL_ALG;
-	cmsg->cmsg_type = ALG_SET_IV;
-	cmsg->cmsg_len = CMSG_LEN(20);
-	ivp = (void *)CMSG_DATA(cmsg);
-	ivp->ivlen = 16;
-
-	/* set iv for cbc algorithm */
-	memcpy(ivp->iv, iv, 16);
-	\end{lstlisting}
-
-	\item Send the data to the Linux Crypto API. \newline
-	Add the data to encrypt or decrypt to the `msghdr` structure and send it to the Linux Crypto API.~\cite{crypto_api_docu}
-	\begin{lstlisting}[style=cstyle]
 	char iov_buf[AES_MSG_LENGTH];
 	struct af_alg_iv *ivp;
 	struct iovec iov = {iov_buf, AES_MSG_LENGTH};
