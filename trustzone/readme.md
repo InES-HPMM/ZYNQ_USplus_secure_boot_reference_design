@@ -1,6 +1,6 @@
 # TrustZone Implementation
 
-This section describes the procedure to implement TrustZone in a project. The first section shows the implementation of the \acrfull{atf}, the second section shows the implementation of OP-TEE.
+This section describes the procedure to implement TrustZone in a project. The first section shows the implementation of the ATF, the second section shows the implementation of OP-TEE. In the folder [images](images) are example binaries, create with this guide.
 
 ## ARM Trusted Firmware (ATF) Implementation
 
