@@ -1,6 +1,6 @@
 # Secure Boot reference design for Xilinx Zynq Ultrascale+
 
-This reference design for the Mercury+ PE1 board with the SoC Module Mercury Xu5
+This reference design for the Mercury+ PE1 board with the SoC Module Mercury XU5
 was created during a bachelor thesis at the ZHAW School of Engineering. It
 should give a head start designing a secure and bootable image for your device.
 This reference design only contains descriptions to the implementation of the
@@ -28,18 +28,18 @@ The complete documentation of the bachelor thesis can be found in the
 
 The basis for secure code execution is the root of trust. Therefore, each
 executed software, up to the operating system has to be trustworthy. The
-`petalinux-prj` directory contains a PetaLinux project, which can be built with
+[petalinux-prj](petalinux-prj) directory contains a PetaLinux project, which can be built with
 just a few steps. Start here if you want to build your own secure image. Later
 you can expand this image with various other features.
 
 ## Tamper Monitoring
 
 The tamper monitoring can detect various tamper event sources. Besides, it works
-also with internal and external sensors, to react on suspicious events. This
-section describes how to implement the tamper monitoring unit on the Zynq
-Ultrascale+. It describes three different ways to configure the tamper and
-system monitoring unit. Additionally, some files are provided to test the
-implementation.
+also with internal and external sensors, to react on suspicious events. The
+[tamper-monitoring](tamper-monitoring) directory describes how to implement the
+tamper monitoring unit on the Zynq Ultrascale+. It describes three different
+ways to configure the tamper and system monitoring unit. Additionally, some
+files are provided to test the implementation.
 
 ## Programming the eFuse and BBRAM
 
@@ -47,25 +47,26 @@ The eFuse and BBRAM are the secure storage in the Zynq Ultrascale+. The BBRAM is
 a battery backed storage, which is non-permanent. It can contain the AES device
 key. The eFuse is a permanent register, where important security settings are
 made. Besides, it can also contain the AES device key as well as the RSA key
-hash for verification.
+hash for verification. The [program-efuse-bbram](program-efuse-bbram) directory
+contains a small description and links to tutorials from Xilinx.
 
 ## Update Process
 
 Updating firmware and software is crucial to maintain security during the
-life-cycle of a device. In this directory, some advises are given on how to
-implement an update procedure.
+life-cycle of a device. In the [update-process](udate-process) directory, some
+advises are given on how to implement an update procedure.
 
 ## Crypto API
 
 The Zynq Ultrascale+ has cryptography hardware for different algorithms with key
-handling integrated in the hardware. The chapter [Crypto API](crypto-api)
+handling integrated in the hardware. The directory [crypto-api](crypto-api)
 describes how the hardware of the Zynq Ultrascale+ can be used in Linux with the
 Crypto API.
 
 ## TrustZone
 
-The Zynq Ultrascale+ supports the ARM TrustZone. The chapter
-[TrustZone](trustzone) describes the concept and shows the implementation of
+The Zynq Ultrascale+ supports the ARM TrustZone. The directory
+[trustzone](trustzone) describes the concept and shows the implementation of
 OP-TEE on the Xilinx zcu102 development board.
 
 ## Tools and Environment
