@@ -1,16 +1,34 @@
-# BA20_rosn_02_Secure_Boot_reference_design
-
-Introduction
-=============
+# Secure Boot reference design for Xilinx Zynq Ultrascale+
 
 This reference design for the board XY was created during a bachelor thesis at
 the ZHAW School of Engineering. It should give a head start designing a secure
 and bootable image for your device.
 
+The complete documentation of the backelor thesis can be found here: [Documentation](full_doku.pdf).
 
-[Full Documentation](full_doku.pdf)
+## Secure Boot
 
-[Crypto API](crypto-api/readme.md)
+## Tamper Monitoring
+
+## Crypto API
+
+The Zynq Ultrascale+ has cryptography hardware for different algorithms with key handling integrated in the hardware. The chapter [Crypto API](crypto-api) describes how the hardware of the Zynq Ultrascale+ can be used in Linux with the Crypto API.
+
+## TrustZone
+
+The Zynq Ultrascale+ supports the ARM TrustZone. The chapter [TrustZone](trustzone) describes the concept and shows the implementation of OP-TEE on the Xilinx zcu102 development board.
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Implementation
 
@@ -824,182 +842,3 @@ values to the registers. This function then has to be called during the
 initialization process. Some registers can be set in the and file. Even
 though this is the most time consuming and circumstantial way, it is one
 of the most secure ways to do.
-
-## Crypto API Implementation
-
-This section describes how to implement an application, which uses the
-<span data-acronym-label="crypto-api" data-acronym-form="singular+short">crypto-api</span>.
-A more detailed description on how the
-<span data-acronym-label="crypto-api" data-acronym-form="singular+short">crypto-api</span>
-works, can be found in section [\[sec.crypto\_api\]](#sec.crypto_api).
-The implementation consists of simple examples, which show how to use
-the different parts of the
-<span data-acronym-label="crypto-api" data-acronym-form="singular+short">crypto-api</span>.
-To compile the examples we used a separate compiler for the aarch64
-architecture. The examples have been compiled as Linux applications with
-a makefile, the full compiler name is . It can be downloaded from
-[Arm](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads).
-We compiled the applications separately, because it is much faster to
-develop and compile single applications, than with petalinux.
-
-### Examples
-
-The
-<span data-acronym-label="crypto-api" data-acronym-form="singular+short">crypto-api</span>
-is designed in a way, to work platform independent and present the user
-a consistent interface. This requires the hardware manufacturer to
-implement the drivers for the crypto hardware in a certain way. Thus, it
-should not matter, on which platform the software runs.
-
-As described in section [\[sec.crypto\_api\_hw\]](#sec.crypto_api_hw),
-the
-<span data-acronym-label="ultrascale+" data-acronym-form="singular+short">ultrascale+</span>
-has crypto hardware from Arm and Xilinx implemented. Arm has implemented
-their hardware drivers like other manufacturers. Therefore, the same
-code that uses the
-<span data-acronym-label="crypto-api" data-acronym-form="singular+short">crypto-api</span>
-on the Cortex A architecture, can be compiled for the x86 architecture.
-The drivers from Xilinx differ from the usual implementation and are
-therefore not platform independent.
-
-#### SHA Examples
-
-For
-<span data-acronym-label="sha" data-acronym-form="singular+abbrv">sha</span>
-are two examples available. One is for
-<span data-acronym-label="sha256" data-acronym-form="singular+abbrv">sha256</span>
-and can be found in the appendix
-[\[crypto-api-example-sha256\]](#crypto-api-example-sha256), the other
-for
-<span data-acronym-label="sha3-384" data-acronym-form="singular+abbrv">sha3-384</span>
-and can be found in
-[\[crypto-api-example-sha384\]](#crypto-api-example-sha384). Table
-[1.1](#tab:overview_sha_examples) gives an overview of the examples.
-
-<div id="tab:overview_sha_examples">
-
-| Example                                                                                | Hardware                                                                                   | Compatibility                                                                                        | Verification |
-| :------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------- | :----------- |
-| <span data-acronym-label="sha256" data-acronym-form="singular+abbrv">sha256</span>     | <span data-acronym-label="crypto-ext" data-acronym-form="singular+short">crypto-ext</span> | compatible with other architectures                                                                  |              |
-| <span data-acronym-label="sha3-384" data-acronym-form="singular+abbrv">sha3-384</span> | Xilinx crypto hardware                                                                     | only on <span data-acronym-label="ultrascale+" data-acronym-form="singular+short">ultrascale+</span> |              |
-
-Overview
-<span data-acronym-label="sha" data-acronym-form="singular+abbrv">sha</span>
-examples
-
-</div>
-
-The example for
-<span data-acronym-label="sha256" data-acronym-form="singular+abbrv">sha256</span>
-uses the
-<span data-acronym-label="crypto-ext" data-acronym-form="singular+short">crypto-ext</span>
-implemented by Arm and is compatible with other architectures. The
-example for
-<span data-acronym-label="sha3-384" data-acronym-form="singular+abbrv">sha3-384</span>
-is for the Xilinx crypto hardware, and thus not compatible to other
-architectures. In both exampled the data which is hashed, is stored in
-the variable at the beginning of the code. The resulting hash is printed
-out to the terminal.
-
-To verify the output of the implementation, the command line tool can be
-used to calculate hashes for
-<span data-acronym-label="sha256" data-acronym-form="singular+abbrv">sha256</span>.
-To verify the
-<span data-acronym-label="sha3-384" data-acronym-form="singular+abbrv">sha3-384</span>
-implementation, the tool can be used. Examples to use these tools can be
-found in the appendix, for
-<span data-acronym-label="sha256" data-acronym-form="singular+abbrv">sha256</span>
-[\[crypto-api-example-sha256-test\]](#crypto-api-example-sha256-test)
-and for
-<span data-acronym-label="sha3-384" data-acronym-form="singular+abbrv">sha3-384</span>
-[\[crypto-api-example-sha-384-test\]](#crypto-api-example-sha-384-test).
--\> Erst in results
-
-#### AES Examples
-
-As descibed in section [\[sec\_features.aes\]](#sec_features.aes),
-<span data-acronym-label="aes" data-acronym-form="singular+abbrv">aes</span>
-has different modes. Examples are available for the modes
-<span data-acronym-label="cbc" data-acronym-form="singular+abbrv">cbc</span>
-and
-<span data-acronym-label="gcm" data-acronym-form="singular+abbrv">gcm</span>.
-
-### AES CBC Example
-
-The example for
-<span data-acronym-label="aes" data-acronym-form="singular+abbrv">aes</span>
-<span data-acronym-label="cbc" data-acronym-form="singular+abbrv">cbc</span>
-can be found in the appendix
-[\[crypto-api-example-aes-cbc-256\]](#crypto-api-example-aes-cbc-256).
-It uses the hardware from the
-<span data-acronym-label="crypto-ext" data-acronym-form="singular+short">crypto-ext</span>
-ans is compatible to other architectures like x86.
-
-##### Key and key Size
-
-<span data-acronym-label="aes" data-acronym-form="singular+abbrv">aes</span>
-<span data-acronym-label="cbc" data-acronym-form="singular+abbrv">cbc</span>
-works with key sizes 128, 192 and 256 bit. The key size can be modified
-with the define and the key can be set with the variable.
-
-##### Data
-
-The data to encrypt or decrypt can be set with the variable . The data
-length can be set with the define and must be a multiple of 128 bit (16
-byte).
-
-##### Encryption/Decryption
-
-To select if the data should encrypted or decrypted, the variable can be
-set with or .
-
-##### <span data-acronym-label="iv" data-acronym-form="singular+abbrv">iv</span>
-
-The
-<span data-acronym-label="iv" data-acronym-form="singular+abbrv">iv</span>
-can be set with the variable and must be 128 bit (16 byte) long.
-
-### AES GCM Example
-
-The first
-<span data-acronym-label="aes" data-acronym-form="singular+abbrv">aes</span>
-<span data-acronym-label="gcm" data-acronym-form="singular+abbrv">gcm</span>
-example is for the Xilinx crypto hardware implementation and can be
-found here
-[\[crypto-api-example-aes-gcm-256-xilinx\]](#crypto-api-example-aes-gcm-256-xilinx).
-The other example is for the usual implementation on other architectures
-and can be found here
-[\[crypto-api-example-aes-gcm-256\]](#crypto-api-example-aes-gcm-256).
-
-#### Example config
-
-##### Key and key Size
-
-<span data-acronym-label="aes" data-acronym-form="singular+abbrv">aes</span>
-<span data-acronym-label="cbc" data-acronym-form="singular+abbrv">cbc</span>
-works with key sizes 128, 192 and 256 bit. The key size can be modified
-with the define and the key can be set with the variable.
-
-##### Data
-
-The data to encrypt or decrypt can be set with the variable . The data
-length can be set with the define and must be a multiple of 128 bit (16
-byte).
-
-##### Encryption/Decryption
-
-To select if the data should encrypted or decrypted, the variable can be
-set with or .
-
-##### <span data-acronym-label="iv" data-acronym-form="singular+abbrv">iv</span>
-
-The
-<span data-acronym-label="iv" data-acronym-form="singular+abbrv">iv</span>
-can be set with the variable and must be 128 bit (16 byte) long.
-
-## TrustZone Implementation
-
-\- ATF - ist immer dabei - selber compilieren - packaging
-
-\- OP-TEE - create project - op-tee compilieren - packaging - ta
-compilieren - signing - ta ausführen
