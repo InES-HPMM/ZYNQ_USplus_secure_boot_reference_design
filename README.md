@@ -66,7 +66,7 @@ Crypto API.
 
 The Zynq Ultrascale+ supports the ARM TrustZone. The directory
 [trustzone](trustzone) describes the concept and shows the implementation of
-OP-TEE on the Xilinx zcu102 development board.
+OP-TEE.
 
 ## Tools and Environment
 

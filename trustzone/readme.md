@@ -1,188 +1,230 @@
 # TrustZone Implementation
 
-This section describes the procedure to implement TrustZone in a project. The first section shows the implementation of the ATF, the second section shows the implementation of OP-TEE. In the folder [images](images) are example binaries, create with this guide.
+This section describes the procedure to implement TrustZone in a project. The
+first section shows the implementation of the ATF, the second section shows the
+implementation of OP-TEE. In the folder [images](images) are example binaries,
+create with this guide.
 
 ## ARM Trusted Firmware (ATF) Implementation
 
-The ARM Trusted Firmware (ATF) is the Secure Monitor from ARM. As it is required to boot the Zynq Ultrascale+, the ATF is included in every project. If TrustZone is not needed in a project, the ATF is not used after boot. To add custom SMC, the source code of the ATF needs to be modified and recompiled. The ATF can either be compiled on its own or as part of a Petalinux project.
+The ARM Trusted Firmware (ATF) is the Secure Monitor from ARM. As it is required
+to boot the Zynq Ultrascale+, the ATF is included in every project. If TrustZone
+is not needed in a project, the ATF is not used after boot. To add custom SMC,
+the source code of the ATF needs to be modified and recompiled. The ATF can
+either be compiled on its own or as part of a Petalinux project.
 
 ### ATF in Petalinux project
 
-The ATF is included in every Petalinux project for the Zynq Ultrascale+ by default. The generated configuration can be found under the following path:
+The ATF is included in every Petalinux project for the Zynq Ultrascale+ by
+default. The generated configuration can be found under the following path:
 
-	<plnx-proj-root>/project-spec/meta-plnx-generated/recipes-bsp/arm-trusted-firmware/
+    <plnx-proj-root>/project-spec/meta-plnx-generated/recipes-bsp/arm-trusted-firmware/
 
 After the project is built, the binary file for the ATF can be found in:
 
-	<plnx-proj-root>/images/linux/bl31.elf
+    <plnx-proj-root>/images/linux/bl31.elf
 
 ### ATF standalone project
 
-To compile the ATF outside of a Petalinux project, the source code is needed. The ATF source code from Xilinx can be found on their Github page: https://github.com/Xilinx/arm-trusted-firmware.
+To compile the ATF outside of a Petalinux project, the source code is needed.
+The ATF source code from Xilinx can be found on their Github page:
+https://github.com/Xilinx/arm-trusted-firmware.
 
-The compiler for aarch64 bare-metal target is needed (aarch64-none-elf). It can be downloaded from ARM: https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads.
+The compiler for aarch64 bare-metal target is needed (aarch64-none-elf). It can
+be downloaded from ARM:
+https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads.
 
-To compile the ATF the following command has to be executed in the root directory of the ATF source:
+To compile the ATF the following command has to be executed in the root
+directory of the ATF source:
 
     make CROSS\_COMPILE=<compiler-path>/bin/aarch64-none-elf- PLAT=zynqmp bl31
 
 The finished binary is placed at the following path:
 
-	<atf-source-root>/build/zynqmp/release/bl31/bl31.elf
+    <atf-source-root>/build/zynqmp/release/bl31/bl31.elf
 
 ### Package ATF
 
-The ATF binary has to be packaged with the other software binaries, in order to be executed on the Zynq Ultrascale+. If Petalinux is used to compile the ATF, the normal command to create the package can be used. The ATF binary is added automatically.
+The ATF binary has to be packaged with the other software binaries, in order to
+be executed on the Zynq Ultrascale+. If Petalinux is used to compile the ATF,
+the normal command to create the package can be used. The ATF binary is added
+automatically.
 
-	petalinux-package -{}-boot -{}-fsbl <FSBL-ELF> -{}-fpga <BITSTREAM> -{}-u-boot -{}-pmufw <PMUFW-ELF>}
+    petalinux-package -{}-boot -{}-fsbl <FSBL-ELF> -{}-fpga <BITSTREAM>
+    -{}-u-boot -{}-pmufw <PMUFW-ELF>}
 
-To generate the package with an ATF binary outside from the Petalinux project, the following command can be used:
+To generate the package with an ATF binary outside from the Petalinux project,
+the following command can be used:
 
-	petalinux-package -{}-boot -{}-fsbl <FSBL-ELF> -{}-fpga <BITSTREAM> -{}-u-boot -{}-pmufw <PMUFW-ELF> -{}-atf <atf-source-root>/build/zynqmp/release/bl31/bl31.elf
+    petalinux-package -{}-boot -{}-fsbl <FSBL-ELF> -{}-fpga <BITSTREAM>
+    -{}-u-boot -{}-pmufw <PMUFW-ELF> -{}-atf
+    <atf-source-root>/build/zynqmp/release/bl31/bl31.elf
 
 
 ## OP-TEE Implementation
 
-The following section describes how to create a Petalinux project with OP-TEE. It is further explained how to compile and load a Trusted Application (TA). The OP-TEE project only worked on the development board zcu102 from Xilinx. It does not boot on the Mercury board from Enclustra. The problem for this could not be found during this work. Therefore, this implementation describes only the solution for the zcu102 board.
+The following section describes how to create a Petalinux project with OP-TEE.
+It is further explained how to compile and load a Trusted Application (TA).
+Because the prebuilt version of OP-TEE from the built repository did not work on
+the Mercury XU5 board, the default meta-linaro layer was added to the project.
+OP-TEE has its own documentation on
+https://optee.readthedocs.io/en/latest/index.html.
 
-### Setup Petalinux project with OP-TEE
+### Sample project from OP-TEE/built
 
-OP-TEE has an example project for the Zynq Ultrascale+, but some additional steps are required to get the project running. The OP-TEE Documentation (https://optee.readthedocs.io/en/latest/index.html) describes the example.
+OP-TEE has an example project for the Zynq Ultrascale+ evaluation boards, but
+some additional steps are required to get the project running. The project is
+not supported anymore and is very delicate to build. Thus, we do not recommend
+to use it. Instead, follow the steps in this description to implement OP-TEE.
 
-The OP-TEE example is made for Petalinux 2018.2 and does not work with version 2019.2. The project can be compiles after the version check is removed. However, it does not boot if, OP-TEE was not compiled with version 2018.2.
+### Add the linaro layer to the petalinux project
 
-Since the OP-TEE example for the Zynq Ultrascale+ was created, OP-TEE was developed further and the example no longer works. The OP-TEE realeses from the time, when the example was created, are used to test the example. The following table lists the different parts of OP-TEE and the used releases.
+The `meta-linaro` layer is the default layer to implement OP-TEE in yocto
+projects. Because petalinux is built upon petalinux, the laer can be added to
+the projec, with only some minor adjustments.
 
-| Name | Link | Git Commit | Date |
-| --- | --- | --- | --- |
-| OP-TEE \acrshort{os} | https://github.com/OP-TEE/optee_os.git | e61fc00f9643fb55f2b19d1168d86b9b15d8d9c9 | 19.04.2019 |
-| OP-TEE Client | https://github.com/OP-TEE/optee_client.git | e9e55969d76ddefcb5b398e592353e5c7f5df198 | 14.05.2020 (latest) |
-| OP-TEE Test | https://github.com/OP-TEE/optee_test.git | 895c5caa9070a134bc12acdc6d0ad0354aa1f644 | 28.02.2019 |
+1. First the meta-linaro layer is cloned to the folder `<prj_path>/components/ext_sources`
+ 
+    ```sh
+    mkdir components/ext_sources
+    git clone -b thud git://git.linaro.org/openembedded/meta-linaro.git
+    ```
+    
+    As Petalinux 2019.2 (the version we were using) uses the thud branch, the
+    thud branch of the layer has to be cloned. 
+    
+2. After the layer is clone, it has to be added as an external layers to the
+   petalinux project. Therefore, type in `petalinux-config` and add the layer in
+   `Yocto settings---> User Layers--->
+   ()user layer 0`. Add the layer by typing to its location,
+   `${PROOT}/components/ext_sources/meta-linaro/meta-optee`. The `meta-layer` is
+   a subfolder to a collection of layers. In our case the `meta-optee` layer. It
+   is important for petalinux, that the layer has a conf folder, with a
+   `layer.conf` file.
+ 
+3. Next, add the recipes to the project dependencies to automatically build the
+   recipes with `petalinux-build`. Add optee-os and optee-client to the
+   `EXTRA_IMAGEDEPENDS_append` variable in the `petalinuxbsp.conf` file in the
+   `<prj_path>/project-spec/meta-user/conf` directory. To test if OPTEE is
+   working on the system add the application `CONFIG_optee-test` to the
+   `<prj_path>/project-spec/meta-user/conf/user-rootfsconfig` file, to
+   automatically build and include it into the rootfs. If you also want to add
+   the example applications provided by OPT-TEE, add `CONFIG_optee-examples`.
+   After they are added, the recipes can be activated in the `petalinux-config -c rootfs` 
+   menuconfig under `user packages-->`. 
 
+### Configuring OP-TEE and the Arm Trusted Firmware
 
-This are the required steps to create the OP-TEE project, the description is similar to the guide in the OP-TEE documentation, but has some additional steps.
+OP-TEE needs further configuration to compile with petalinux and to run on the
+Mercury XU5 board. Additionally, the Arm Trusted Firmware (ATF) has to be
+configured, such that it start OP-TEE OS.
+ 
+1. OP-TEE requires a machine name to configure OP-TEE OS accordingly.
+   Additionally, petalinux requires the built binaries to be in certain directories
+   with certain names, to copy them to the known output folder of petalinux
+   `<prj_path>/images/linux`. Add a recipe configuration file to the project-specification in
+   `<prj_path>/project-spec/meta-user/recipes-security/optee-os/optee-os_%.bbappend`.
 
-#### Create a new directory for the project. 
+    ```
+    OPTEEMACHINE = "zynqmp"
+    OPTEEOUTPUTMACHINE = "zynqmp"
 
-The new directory serves as the root directory for the project
-	
-#### Place the \acrfull{bsp} in the project root directory
+    do_deploy() {
+	    install -d ${DEPLOYDIR}
+	    install -d ${TMPDIR}/../../images/linux/
+	    install -m 0644 ${B}/out/arm-plat-${OPTEEOUTPUTMACHINE}/core/tee.elf ${DEPLOYDIR}/optee
+	    install -m 0644 ${B}/out/arm-plat-${OPTEEOUTPUTMACHINE}/core/tee.elf ${TMPDIR}/../../images/linux/bl32.elf
+	    install -m 0644 ${B}/out/arm-plat-${OPTEEOUTPUTMACHINE}/core/tee.bin ${DEPLOYDIR}/optee
+	    install -m 0644 ${B}/out/arm-plat-${OPTEEOUTPUTMACHINE}/core/tee.bin ${TMPDIR}/../../images/linux/bl32.bin
+    }
+    addtask deploy before do_build after do_install
+    ```
 
-The BSP for Xilinx boards can be downloaded from the Xilinx download page. The file for the zcu102 board is xilinx-zcu102-v2018.2-final.bsp. (As the OP-TEE example was made for Petalinux 2018.2, the BSP for this version needs to be selected.
-	
-#### Clone the OP-TEE build repository into the project root directory.
+2. Expand the device tree with the OP-TEE firmware device. This device serves as
+   an interface to the TEE. Add the following lines to the file in the directory
+   `<prj_path>/project_spec/meta-user/recipes-bsp/devices-tree/files/system-user.dtsi`.
 
-	git clone https://github.com/OP-TEE/build
-	
-#### Build the project
+    ``` 
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+		};
+	};
+    ```
+    
+3. Additionally we need to tell the ATF to initialize
+   OP-TEE OS. Thus, type `petalinux-config` to the commandline and go to 
+   `ARM Trusted Firmware Compilation Configuration --->`. Check 
+   `ATF memory settings` and change `ATF MEM SIZE` to `0x16001`.
+   Accordingly, the base address has also to be adjusted, else the memory will
+   overflow. Therfore, change the `ZYNQ_ATF_MEM_BASE` to `0xFFFE9000`.
+   Additionally, add 
+   `SPD=opteed ZYNQMP_BL32_MEM_BASE=0x60000000 ZYNQMP_BL32_MEM_SIZE=0x80000 RESET_TO_BL31=1` 
+   to the `extra ATF compilation settings`.
+   
+### Configuring OP-TEE examples
 
-The cloned repository contains a makefile to create the project. By default, the project is generated for the zcu102 board from Xilinx. The makefile creates the project and starts to build, the first build will fail, as some additional configurations need to be made, as described in the next steps.
+The examples do not compile out of the box. Petalinux will through an error. To
+prevent the error add a `optee-examples.bbappend` file to
+`<prj_path>/project_spec/meta-user/recipes-security/optee_examples` and add the
+follwing content to it.
 
-	cd build/
-	make -f zynqmp.mk
-	
-#### Clone the OP-TEE OS and Test repository into the project root directory
+```
+TARGET_CC_ARCH += "${LDFLAGS}"
+```
 
-OP-TEE has 3 parts, optee_os, optee_client and optee_test. At the time of the implementation, the latest version of optee\_client worked and only optee_os and optee_test needed older versions.
+### Enable the Linux device drivers for OP-TEE
 
-	git clone https://github.com/OP-TEE/optee_os.git
-	git clone https://github.com/OP-TEE/optee_test.git
-	
-#### Revert the OP-TEE repositories
+The devices have been added to the device tree in the previous step. Now the
+drivers in Linux have to be enabled. The driver settings can be simply activated
+using the menuconfig, using the `petalinux-config -c kernel` command. The
+driver is located under `Device Drivers ---> Trusted Execution Environment support`. 
+Enable the driver as built in (`*`) and also enable the additional OP-TEE driver under `TEE drivers --->
+OP-TEE`. Although this would suffice, petalinux complains about the
+configuration. Also if the project would be cleaned, the changes would not
+persist. Thus, to finalize the call `petalinux-build -c kernel -x finish`. This
+command generates a config patch file located in the 
+`<prj_path>/project-spec/meta-user/recipes-kernel/linux` directory. If the
+kernel is rebuilt, the patch is reapplied to the kernel configurations and
+enables the drivers again.
 
-Revert the repositories to the state, when the example was created.
+### Add OP-TEE to the .bif file
 
-    cd optee\_os
-    git revert e61fc00f9643fb55f2b19d1168d86b9b15d8d9c9
-    cd ../optee\_test
-    git revert 895c5caa9070a134bc12acdc6d0ad0354aa1f644
-	
-#### Change the configuration files to use the local repositories for OP-TEE
-	
-Open file \code{zcu102-2018.2/project-spec/meta-user/recipes-bsp/optee-os/optee-os.bb} and modify line 27:
+Because OP-TEE is loaded and initialized during the start procedure of the ATF
+it also has to be included in the boot image. To do so add the following lines
+to your `.bif` file.
 
-	REPO ??= "git://<path-to-proj-root-dir>/optee_os/;protocol=file"
+```
+/* optee-os */
+[
+    trustzone               = secure,
+    exception_level         = el-1,
+    destination_cpu         = a53-0,
 
-Open file \code{zcu102-2018.2/project-spec/meta-user/recipes-apps/optee-test/optee-test.bb} and modify line 21:
+    authentication          = rsa,
+    spk_select              = spk-efuse,
+    spk_id                  = 0x46857465,
+    sskfile                 = keys/secondary3.pem,
 
-	REPO ??= "git://<path-to-proj-root-dir>/optee_test;protocol=file"
+    encryption              = aes,
+    aeskeyfile              = keys/aes_p4.nky
 
-	
-#### Recompile the Petalinux project
+] images/linux/bl32.elf
+```
 
-After the configuration is made, the project needs to be recompiled, this time it the build should complete without errors.
+OP-TEE OS as secure OS is running in the secure world. Thus, it is defined as
+trustzone secure. Also consider to create additional keys. In this case only a new RSA key has to
+be generated in (`keys/secondary3.pem`). The AES key will be automatically
+generated when the image is built.
 
-    cd <path-to-proj-root-dir>/zcu102-2018.2/
-    petalinux-build
-	
-After the build is finished, the following files should be in folder `<path-to-proj-root-dir>/zcu102-2018.2/images/linux/`:
+### Test OP-TEE
 
-    zynqmp\_fsbl.elf (FSBL Binary)
-    pmufw.elf (PMU Firmware Binary)
-    u-boot.elf (U-Boot Binary)
-    system.bit (Bitstream)
-    bl31.bin (ATF Binary)
-    bl32.elf (OP-TEE Binary)
-    image.ub (Linux)
-	
-#### Package the binaries
-
-Create a file named `boot.bif` with the configuration for the package:
-
-	image : {
-	[ /* fsbl */
-	bootloader,
-	destination_cpu         = a53-0
-	] zynqmp_fsbl.elf
-
-	[ /* pmufw */
-	destination_cpu         = pmu
-	] pmufw.elf
-
-	[ /* bitstream */
-	destination_device      = pl
-	] system.bit
-
-	[ /* trusted firmware */
-	trustzone,
-	exception_level         = el-3,
-	destination_cpu         = a53-0
-	] bl31.elf
-
-	[ /* u-boot */
-	exception_level         = el-2,
-	destination_cpu         = a53-0
-	] u-boot.elf
-
-	[ /* op-tee */
-	trustzone,
-	exception_level		= el-1,
-	destination_cpu		= a53-0
-	] bl32.elf
-	}
-
-With the following command the package can be created:
-
-    bootgen -arch zynqmp -image boot.bif -o i boot.bin
-	
-#### Boot the Zynq Ultrascale+
-
-The files `boot.bin` and `image.ub` are needed to boot the Zynq Ultrascale+. During boot, OP-TEE is loaded in the secure world and Linux in the non-secure world.
-	
-#### Start the OP-TEE client and run the self test
-
-The OP-TEE client can be started with the command:
-
-    tee-supplicant &
-	
-To check if OP-TEE is initialized and started correctly, the self test can be run:
-
-    xtest
-	
-The system is now ready to load and execute a TA.
-
-
-
+To test OP-TEE start the tee-supplicant with the command `tee-supplicant -d`.
+After the initialization run `xtest` run through all test. At the end, the
+programm prints aut a summary. For more information on the test programm
+consider the wiki page
+https://optee.readthedocs.io/en/latest/building/gits/optee_test.html?highlight=test.
 
 ### Setup Toolchain for Trusted Application (TA)
 
