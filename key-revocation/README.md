@@ -1,11 +1,5 @@
 # Key Revocation
 
-## key-revocation folder structure
-
-| Folder/File name | Description |
-|------------------|-------------|
-| README.md | This file. |
-
 ## Implementation
 
 Two major steps are required to revoke keys. First, the `.bif` file has to be adjusted

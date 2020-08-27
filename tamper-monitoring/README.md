@@ -2,13 +2,13 @@
 
 ## tamper_monitoring folder structure
 
-| Folder/File name | Description |
-|------------------|-------------|
-| testing | A folder containing different programs to read and write registers |
+| Folder/File name | Description                                               |
+|------------------|-----------------------------------------------------------|
+| testing          | Contains different programs to read and write registers   |
 
 ## Implementation
 
-Only three tamper events could have been implemented for testing. Those were the
+Only three tamper events have been implemented for testing. Those were the
 tamper events for JTAG toggling, for temperature change and the manual tamper
 event trigger. Only these three tamper events could be tested due to the lack of
 material at home, which was the working place during the corona crisis. The

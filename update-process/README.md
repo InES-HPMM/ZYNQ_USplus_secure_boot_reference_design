@@ -3,12 +3,12 @@
 ## Implementation
 
 The update process varies from use case to use case and is dependable on both
-the boot and the update source used. The update process has to be
-initiated by an authorized source. Then the new image is read from the external
-source and checked. If the check was successful, the image can be written to the
-boot storage and the device can be rebooted. Else, the update process has to be
-stopped. The implemented update process is very rudimentary and serves only as a
-proof of concept. As described in the previous section, QSPI is used as the
+the boot and the update source used. The update process has to be initiated by
+an authorized source. Then the new image is read from the external source and
+checked. If the check was successful, the image can be written to the boot
+storage and the device can be rebooted. Else, the update process has to be
+stopped. The implemented update process is very rudimentary and serves only as
+a proof of concept. As described in the previous section, QSPI is used as the
 primary boot storage. Thus, to update the image, the allocated section in the
 boot storage has to be overwritten with the new image. To overwrite the image,
 we used the same approach as described in the previous section.
@@ -23,8 +23,8 @@ even more security. After the new image is written, the device has to be
 restarted, to use the new image. In our case, the restart command is not
 automatically executed. Therefore, the user has to restart the device manually,
 making sure, that in the following restart the device boots from the correct
-boot storage and image. The start address of the image is seen at the end of the
-following listing after *QSPI Reading Src* on Line 16.
+boot storage and image. The start address of the image is seen at the end of
+the following listing after *QSPI Reading Src* on Line 16.
 
 ```
 Xilinx Zynq MP First Stage Boot Loader
