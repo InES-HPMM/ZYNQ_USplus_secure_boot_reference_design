@@ -24,24 +24,24 @@ found in the documentation linked [here](##getting-started).
 
 1. To begin, clone this Git repository.
 
-```sh
-git clone https://github.zhaw.ch/hpmm/BA20_rosn_02_Secure_Boot_reference_design
-```
+    ```sh
+    git clone https://github.zhaw.ch/hpmm/BA20_rosn_02_Secure_Boot_reference_design
+    ```
 
 2. Move to the `petalinux-prj` folder.
 
-```sh
-cd BA20_rosn_02_Secure_Boot_reference_design/petalinux-prj
-```
+    ```sh
+    cd BA20_rosn_02_Secure_Boot_reference_design/petalinux-prj
+    ```
 
 3. Source the PetaLinux environment as described in the  Documentation.
 
 4. Try to configure the project with the following command, to test if your
    PetaLinux is working.
 
-```sh
-petalinux-config
-```
+    ```sh
+    petalinux-config
+    ```
 
 5. If a menu opens everything works fine. It can be exited by double pressing
    the `ESC` key.
@@ -49,60 +49,60 @@ petalinux-config
    not a PetaLinux Project, a new project has to be created and then overwritten
    with the one in the Git repository.
 
-```sh
-# Change to the previous directory
-cd ..
-# Create a new petalinux project
-petalinux-create -t project --template zynqMP --n petalinux-prj --force
-# Overwrite the created project with the files from the Git repository
-git checkout HEAD petalinux-prj
-# Change back to the project directory
-cd petalinux-prj
-```
+    ```sh
+    # Change to the previous directory
+    cd ..
+    # Create a new petalinux project
+    petalinux-create -t project --template zynqMP --n petalinux-prj --force
+    # Overwrite the created project with the files from the Git repository
+    git checkout HEAD petalinux-prj
+    # Change back to the project directory
+    cd petalinux-prj
+    ```
 
 6. Generate the executables. The executables will be generated in `images/linux`.
 
-```sh
-petalinux-build
-```
+    ```sh
+    petalinux-build
+    ```
 
 7. Generate keys for your image, as no keys are included in the project. With
    the standard `.bif` file, four AES and 5 RSA keys have to be generated.
    First we are going to generate the 5 RSA keys with the following command.
 
-```sh
-# Create a directory for your keys called "keys"
-mkdir keys
-# Change into the keys directory
-cd keys
-# Generate 4 keys with a length of 4096
-openssl genrsa -out primary.pem 4096 
-openssl genrsa -out secondary0.pem 4096 
-openssl genrsa -out secondary1.pem 4096 
-openssl genrsa -out secondary2.pem 4096 
-openssl genrsa -out secondary3.pem 4096 
-```
+    ```sh
+    # Create a directory for your keys called "keys"
+    mkdir keys
+    # Change into the keys directory
+    cd keys
+    # Generate 4 keys with a length of 4096
+    openssl genrsa -out primary.pem 4096 
+    openssl genrsa -out secondary0.pem 4096 
+    openssl genrsa -out secondary1.pem 4096 
+    openssl genrsa -out secondary2.pem 4096 
+    openssl genrsa -out secondary3.pem 4096 
+    ```
 
 8. Next we are going to generate the AES key files.
 
-```sh
-# Change back to the project directory
-cd ..
-# Generate all keys by running bootgen through the petalinux-package command
-petalinux-package --boot --bif boot.bif --bootgen-extra-args "-p\ mercuryxu5" --force
-```
+    ```sh
+    # Change back to the project directory
+    cd ..
+    # Generate all keys by running bootgen through the petalinux-package command
+    petalinux-package --boot --bif boot.bif --bootgen-extra-args "-p\ mercuryxu5" --force
+    ```
 
 9. Generate the PPK hash, which will later be stored in the eFuse.
 
-```sh
-petalinux-package --boot --bif boot.bif --bootgen-extra-args "-efuseppkbits\ keys/efuseppkhash.txt" --force
-```
+    ```sh
+    petalinux-package --boot --bif boot.bif --bootgen-extra-args "-efuseppkbits\ keys/efuseppkhash.txt" --force
+    ```
 
 9. Generate the boot image for an sd card.
 
-```sh
-./package.sh sd
-```
+    ```sh
+    ./package.sh sd
+    ```
 
 10. Write at least the AES key to the BBRAM following this
     [README](../program-efuse-bbram/README.md) in the folder
@@ -110,16 +110,16 @@ petalinux-package --boot --bif boot.bif --bootgen-extra-args "-efuseppkbits\ key
     `bh_auth_enable` has to be added to the `.bif` file. It enables simulation
     of the authentication process for development.
     
-```c
-[fsbl_config] opt_key, bh_auth_enable
-```
+    ```c
+    [fsbl_config] opt_key, bh_auth_enable
+    ```
 
- 11. Write `BOOT.bin` found ind `images/linux` to the sd card.
+11. Write `BOOT.bin` found ind `images/linux` to the sd card.
  
- 12. Boot from the image. 
+12. Boot from the image. 
  
- Booting will stop in U-boot, when it searches for a tftp server, to get the 
- Linux image from.
+    Booting will stop in U-boot, when it searches for a tftp server, to get the 
+    Linux image from.
  
 ## PetaLinux project structure
 

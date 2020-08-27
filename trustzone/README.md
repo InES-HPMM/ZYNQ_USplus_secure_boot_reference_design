@@ -132,7 +132,7 @@ configured, such that it start OP-TEE OS.
    `<prj_path>/images/linux`. Add a recipe configuration file to the project-specification in
    `<prj_path>/project-spec/meta-user/recipes-security/optee-os/optee-os_%.bbappend`.
 
-    ```python
+    ```sh
     OPTEEMACHINE = "zynqmp"
     OPTEEOUTPUTMACHINE = "zynqmp"
 
@@ -177,7 +177,7 @@ prevent the error add a `optee-examples.bbappend` file to
 `<prj_path>/project_spec/meta-user/recipes-security/optee_examples` and add the
 follwing content to it.
 
-```python
+```sh
 TARGET_CC_ARCH += "${LDFLAGS}"
 ```
 
