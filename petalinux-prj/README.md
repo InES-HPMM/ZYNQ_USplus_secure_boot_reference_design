@@ -24,13 +24,13 @@ found in the documentation linked [here](##getting-started).
 
 1. To begin, clone this Git repository.
 
-``` sh
+```sh
 git clone https://github.zhaw.ch/hpmm/BA20_rosn_02_Secure_Boot_reference_design
 ```
 
 2. Move to the `petalinux-prj` folder.
 
-``` sh
+```sh
 cd BA20_rosn_02_Secure_Boot_reference_design/petalinux-prj
 ```
 
@@ -39,7 +39,7 @@ cd BA20_rosn_02_Secure_Boot_reference_design/petalinux-prj
 4. Try to configure the project with the following command, to test if your
    PetaLinux is working.
 
-``` sh
+```sh
 petalinux-config
 ```
 
@@ -49,7 +49,7 @@ petalinux-config
    not a PetaLinux Project, a new project has to be created and then overwritten
    with the one in the Git repository.
 
-``` sh
+```sh
 # Change to the previous directory
 cd ..
 # Create a new petalinux project
@@ -62,7 +62,7 @@ cd petalinux-prj
 
 6. Generate the executables. The executables will be generated in `images/linux`.
 
-``` sh
+```sh
 petalinux-build
 ```
 
@@ -70,7 +70,7 @@ petalinux-build
    the standard `.bif` file, four AES and 5 RSA keys have to be generated.
    First we are going to generate the 5 RSA keys with the following command.
 
-``` sh
+```sh
 # Create a directory for your keys called "keys"
 mkdir keys
 # Change into the keys directory
@@ -85,7 +85,7 @@ openssl genrsa -out secondary3.pem 4096
 
 8. Next we are going to generate the AES key files.
 
-``` sh
+```sh
 # Change back to the project directory
 cd ..
 # Generate all keys by running bootgen through the petalinux-package command
@@ -94,13 +94,13 @@ petalinux-package --boot --bif boot.bif --bootgen-extra-args "-p\ mercuryxu5" --
 
 9. Generate the PPK hash, which will later be stored in the eFuse.
 
-``` sh
+```sh
 petalinux-package --boot --bif boot.bif --bootgen-extra-args "-efuseppkbits\ keys/efuseppkhash.txt" --force
 ```
 
 9. Generate the boot image for an sd card.
 
-``` sh
+```sh
 ./package.sh sd
 ```
 
@@ -110,7 +110,7 @@ petalinux-package --boot --bif boot.bif --bootgen-extra-args "-efuseppkbits\ key
     `bh_auth_enable` has to be added to the `.bif` file. It enables simulation
     of the authentication process for development.
     
-``` objectivec
+```c
 [fsbl_config] opt_key, bh_auth_enable
 ```
 
@@ -185,7 +185,7 @@ In this case, none of the template board support packages from Xilinx will fit
 the chip, and an exported hardware will be later imported to the project. Thus,
 create a project with the `zynqMP` template.
 
-```
+```sh
 petalinux-create --type project --template zynqMP --name <project-name>
 ```
 
@@ -208,7 +208,7 @@ It is essential only to have one exported hardware file in the folder, else
 PetaLinux will complain. Import the hardware description file to PetaLinux with
 the following command.
 
-```
+```sh
 petalinux-config --get-hw-description=<PATH-TO-FOLDER-CONTAINING-HDF-OR-XSA>
 ```
 
@@ -219,7 +219,7 @@ It can be exited by double-pressing the `ESC` key. The different components are
 configured separately in PetaLinux. There are two ways to configure components.
 If available, a `menuconfig` can be invoked, as seen after the hardware import, by typing:
 
-```
+```sh
 petalinux-config -c <COMPONENT-NAME>
 ```
 
@@ -241,7 +241,7 @@ These components are:
 Likewise, to configuring, build individual components with the `-c <COMPONENT-NAME>` flag. To build
 the whole project use:
 
-```
+```sh
 petalinux-build
 ```
 
@@ -251,7 +251,7 @@ After building the project, all individual executables are generated
 individually but are not bundled together in a boot-able image. To generate a
 basic boot-able image use:
 
-```
+```sh
 petalinux-package --boot --fsbl <FSBL-ELF> --fpga <BITSTREAM> --u-boot --pmufw <PMUFW-ELF>
 ```
 
@@ -303,7 +303,7 @@ other possibility is by using only public keys. This possibility can be used to
 protect the secret keys. The following code listing shows the settings when only
 public keys are used.
 
-``` objectivec
+```c
 image : {
     /* Key revocation features */
     [auth_params] ppk_select=0; spk_select=spk-efuse; spk_id=0x00000000
@@ -347,7 +347,7 @@ simpler. Instead of defining public keys and signatures, only the secret keys
 have to be defined. bootgen automatically generates signatures and public keys
 in the process.
 
-``` objectivec
+```c
 image : {
     /* Key revocation features */
     [auth_params] ppk_select=0; spk_select=spk-efuse; spk_id=0x00000000
@@ -372,7 +372,7 @@ image : {
 In this example, for each partition, a different key has been used. The
 additional parameter
 
-```
+```c
 [fsbl_config] bh_auth_enable
 ```
 
@@ -392,7 +392,7 @@ throws an error, if two separate keys are defined.
 In both cases, at some point, keys have to be generated. Xilinx provides a way
 of using bootgen.
 
-```
+```sh
 openssl genrsa -out key.pem 4096
 ```
 
@@ -410,7 +410,7 @@ To be able to write the hash from the PPK to the eFuse, it first has to be
 generated. Thus, the bootgen tool also provides a feature to generate the hash
 automatically.
 
-```
+```sh
 bootgen -efuseppkbits efuseppkhash.txt -arch zynqmp -w -o test.bin -image boot.bif
 ```
 
@@ -431,7 +431,7 @@ encryption with the operational key method and the rolling key method for the
 `longimage.bit` file. More information about file attributes can be found in the
 bootgen User Guide.
 
-``` objectivec
+```c
 image : {
     /* Define source of device key */
     [keysrc_encryption] BBRAM_red_key

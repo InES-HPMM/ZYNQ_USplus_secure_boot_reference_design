@@ -40,8 +40,8 @@ https://developer.arm.com/tools-and-software/open-source-software/developer-tool
 To compile the ATF the following command has to be executed in the root
 directory of the ATF source:
 
-``` sh
-make CROSS\_COMPILE=<compiler-path>/bin/aarch64-none-elf- PLAT=zynqmp bl31
+```sh
+make CROSS_COMPILE=<compiler-path>/bin/aarch64-none-elf- PLAT=zynqmp bl31
 ```
 
 The finished binary is placed at the following path:
@@ -57,18 +57,15 @@ be executed on the Zynq Ultrascale+. If Petalinux is used to compile the ATF,
 the normal command to create the package can be used. The ATF binary is added
 automatically.
 
-``` sh
-petalinux-package -{}-boot -{}-fsbl <FSBL-ELF> -{}-fpga <BITSTREAM>
--{}-u-boot -{}-pmufw <PMUFW-ELF>}
+```sh
+petalinux-package --boot --fsbl <FSBL-ELF> --fpga <BITSTREAM> --u-boot --pmufw <PMUFW-ELF>}
 ```
 
 To generate the package with an ATF binary outside of the Petalinux project,
 the following command can be used:
 
-``` sh
-petalinux-package -{}-boot -{}-fsbl <FSBL-ELF> -{}-fpga <BITSTREAM>
--{}-u-boot -{}-pmufw <PMUFW-ELF> -{}-atf
-<atf-source-root>/build/zynqmp/release/bl31/bl31.elf
+```sh
+petalinux-package --boot --fsbl <FSBL-ELF> --fpga <BITSTREAM> --u-boot --pmufw <PMUFW-ELF> --atf <atf-source-root>/build/zynqmp/release/bl31/bl31.elf
 ```
 
 ## OP-TEE Implementation
@@ -94,7 +91,7 @@ projects. Because petalinux is built upon petalinux, the laer can be added to
 the projec, with only some minor adjustments.
 
 1. First the meta-linaro layer is cloned to the folder `<prj_path>/components/ext_sources`
- 
+
     ```sh
     mkdir components/ext_sources
     git clone -b thud git://git.linaro.org/openembedded/meta-linaro.git
@@ -135,7 +132,7 @@ configured, such that it start OP-TEE OS.
    `<prj_path>/images/linux`. Add a recipe configuration file to the project-specification in
    `<prj_path>/project-spec/meta-user/recipes-security/optee-os/optee-os_%.bbappend`.
 
-    ```
+    ```python
     OPTEEMACHINE = "zynqmp"
     OPTEEOUTPUTMACHINE = "zynqmp"
 
@@ -154,7 +151,7 @@ configured, such that it start OP-TEE OS.
    an interface to the TEE. Add the following lines to the file in the directory
    `<prj_path>/project_spec/meta-user/recipes-bsp/devices-tree/files/system-user.dtsi`.
 
-    ``` 
+    ```
 	firmware {
 		optee {
 			compatible = "linaro,optee-tz";
@@ -180,7 +177,7 @@ prevent the error add a `optee-examples.bbappend` file to
 `<prj_path>/project_spec/meta-user/recipes-security/optee_examples` and add the
 follwing content to it.
 
-```
+```python
 TARGET_CC_ARCH += "${LDFLAGS}"
 ```
 
@@ -205,7 +202,7 @@ Because OP-TEE is loaded and initialized during the start procedure of the ATF
 it also has to be included in the boot image. To do so add the following lines
 to your `.bif` file.
 
-```
+```c
 /* optee-os */
 [
     trustzone               = secure,
@@ -242,48 +239,60 @@ After OP-TEE is configured and running, a TA can be loaded and executed. The OP-
 
 The following script is an example of how the OP-TEE toolchain can be installed:
 
-	mkdir -p $HOME/toolchains
-	cd $HOME/toolchains
+```sh
+mkdir -p $HOME/toolchains
+cd $HOME/toolchains
 
-	# Download 32bit toolchain
-	wget https://developer.arm.com/-/media/Files/downloads/gnu-a/8.2-2019.01/gcc-arm-8.2-2019.01-x86_64-arm-linux-gnueabi.tar.xz
-	mkdir aarch32
-	tar xf gcc-arm-8.2-2019.01-x86_64-arm-linux-gnueabi.tar.xz -C aarch32 --strip-components=1
+# Download 32bit toolchain
+wget https://developer.arm.com/-/media/Files/downloads/gnu-a/8.2-2019.01/gcc-arm-8.2-2019.01-x86_64-arm-linux-gnueabi.tar.xz
+mkdir aarch32
+tar xf gcc-arm-8.2-2019.01-x86_64-arm-linux-gnueabi.tar.xz -C aarch32 --strip-components=1
 
-	# Download 64bit toolchain
-	wget https://developer.arm.com/-/media/Files/downloads/gnu-a/8.2-2019.01/gcc-arm-8.2-2019.01-x86_64-aarch64-linux-gnu.tar.xz
-	mkdir aarch64
-	tar xf gcc-arm-8.2-2019.01-x86_64-aarch64-linux-gnu.tar.xz -C aarch64 --strip-components=1
+# Download 64bit toolchain
+wget https://developer.arm.com/-/media/Files/downloads/gnu-a/8.2-2019.01/gcc-arm-8.2-2019.01-x86_64-aarch64-linux-gnu.tar.xz
+mkdir aarch64
+tar xf gcc-arm-8.2-2019.01-x86_64-aarch64-linux-gnu.tar.xz -C aarch64 --strip-components=1
+```
 
 
 It can be installed at any path on the system, it just needs to be sourced before the next steps:
 
-	export PATH=\$PATH:\$HOME/toolchains/aarch32/bin:\$HOME/toolchains/aarch64/bin}~\cite{optee_toolchain
+```sh
+export PATH=$PATH:$HOME/toolchains/aarch32/bin:$HOME/toolchains/aarch64/bin
+```
 
 Clone the OP-TEE OS repository and build it:
 
-	git clone https://github.com/OP-TEE/optee\_os.git
+```sh
+git clone https://github.com/OP-TEE/optee_os.git
 
-	make CFG\_ARM64\_core=y CFG\_TEE\_BENCHMARK=n CFG\_TEE\_CORE\_LOG\_LEVEL=3 CROSS\_COMPILE=aarch64-linux-gnu-  CROSS\_COMPILE\_core=aarch64-linux-gnu- CROSS\_COMPILE\_ta\_arm32=arm-linux-gnueabi- CROSS\_COMPILE\_ta\_arm64=aarch64-linux-gnu- DEBUG=1 O=out/arm PLATFORM=zynqmp
+make CFG_ARM64_core=y CFG_TEE_BENCHMARK=n CFG_TEE_CORE_LOG_LEVEL=3 CROSS_COMPILE=aarch64-linux-gnu-  CROSS_COMPILE_core=aarch64-linux-gnu- CROSS_COMPILE_ta_arm32=arm-linux-gnueabi- CROSS_COMPILE_ta_arm64=aarch64-linux-gnu- DEBUG=1 O=out/arm PLATFORM=zynqmp
+```
 
 Clone the OP-TEE client repository and built it:
 
-	git clone https://github.com/OP-TEE/optee\_client.git
+```sh
+git clone https://github.com/OP-TEE/optee_client.git
 
-	make CROSS\_COMPILE=aarch64-linux-gnu-
+make CROSS_COMPILE=aarch64-linux-gnu-
+```
 
 ### Compile a Trusted Application (TA)
 
 The Git repository https://github.com/linaro-swg/optee_examples contains a number of different example TAs. The examples consist of a `host` and a `ta` part. The `ta` part is the TA, which is running in the secure world, while the `host` part is the client application running in Linux, which communicate with the TA.
 
-To prohibit the loading of a malicious TA, the TAs are signed. OP-TEE supports only a hardcoded key. The OP-TEE OS has a folder \code{keys} that contains the key, which is compiled into OP-TEE. During the build, the TA is automatically signed. The default key should be changed if the software is used in production.
+To prohibit the loading of a malicious TA, the TAs are signed. OP-TEE supports only a hardcoded key. The OP-TEE OS has a folder `keys` that contains the key, which is compiled into OP-TEE. During the build, the TA is automatically signed. The default key should be changed if the software is used in production.
 
 Switch to the `host` folder of an example and run the command to compile the `host` part:
 
-	make CROSS\_COMPILE=aarch64-linux-gnu- TEEC\_EXPORT=<optee\_client>/out/export/usr --no-builtin-variables}
+```sh
+make CROSS_COMPILE=aarch64-linux-gnu- TEEC_EXPORT=<optee_client>/out/export/usr --no-builtin-variables}
+```
 
 Change to the `ta` folder to compile the TA.
 
-	make CROSS\_COMPILE=arm-linux-gnueabi- PLATFORM=zynqmp TA\_DEV\_KIT\_DIR=<optee\_os>/out/arm/export-ta\_arm32}
+```sh
+make CROSS_COMPILE=arm-linux-gnueabi- PLATFORM=zynqmp TA_DEV_KIT_DIR=<optee_os>/out/arm/export-ta_arm32}
+```
 
-To execute the TA, copy the new binary inside the `host` folder and the `*.ta` file from the `ta` folder to the Zynq Ultrascale+. Move the `*.ta` file to the folder `/lib/optee\_armtz/` and execute the binary.
+To execute the TA, copy the new binary inside the `host` folder and the `*.ta` file from the `ta` folder to the Zynq Ultrascale+. Move the `*.ta` file to the folder `/lib/optee_armtz/` and execute the binary.
