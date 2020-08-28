@@ -2,7 +2,10 @@
 
 [![logo](images/ines_logo.png)](https://www.zhaw.ch/en/engineering/institutes-centres/ines/ "Homepage")
 
-__The group High Performance Multimedia from the Institute of Embedded Systems associated with ZHAW School of Engineering proudly presents a secure boot implementation for the SoC module Mercury XU5 from Enclustra based on the Zynq Ultrascale+ MPSoC from Xilinx.__
+__The group High Performance Multimedia from the Institute of Embedded Systems
+associated with ZHAW School of Engineering proudly presents a secure boot
+implementation for the SoC module Mercury XU5 from Enclustra based on the Zynq
+Ultrascale+ MPSoC from Xilinx.__
 
 > For recent news check out our [Blog](https://blog.zhaw.ch/high-performance/).
 
