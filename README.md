@@ -1,4 +1,4 @@
-# Secure Boot reference design for Mercury XU5 
+# Secure Boot reference design for Zynq Ultrascale+ MPSoC
 
 [![logo](images/ines_logo.png)](https://www.zhaw.ch/en/engineering/institutes-centres/ines/ "Homepage")
 
